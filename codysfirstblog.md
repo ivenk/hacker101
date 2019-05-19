@@ -23,7 +23,7 @@ From the admin panel found in during flag 2 you can approve the comment from fla
 The trick here is to play with the page parameter. The comment on the front page mentions the php include function and that's exactly what happens on the server side. The php include function is famous for lfi and rfi.
 
 ### RFI
-The comment on the front page mentions that the server cannot talk to the outside world. And indead rfi doesn't work.
+The comment on the front page mentions that the server cannot talk to the outside world. And indeed rfi doesn't work.
 
 ### LFI
 Basic LFI is difficult because we don't know what files can be found on the server and directory traversel does not work.
