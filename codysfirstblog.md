@@ -19,7 +19,7 @@ In the admin area you can approve all of the comments. And find the second flag.
 ## Flag 2 – PHP
 
 Now this flag is a little strange.
-From the admin panel found in during flag 2 you can approve the comment from flag 1. But this doesnt actually do anything. Revisiting the front page shows that the code will be embedded in a comment similar to the link to the admin login panel.
+From the admin panel found during flag 1 you can approve the comment from flag 0. But this doesnt actually do anything. Revisiting the front page shows that the code will be embedded in a comment similar to the link to the admin login panel.
 The trick here is to play with the page parameter. The comment on the front page mentions the php include function and that's exactly what happens on the server side. The php include function is famous for lfi and rfi.
 
 ### RFI
