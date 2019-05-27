@@ -1,5 +1,6 @@
-This ctf took me quit a while to figure out. I personally found flag 1 first then flag 0 and I am still working on flag 2. I believe that most people will get flag 1 before flag 0. So i will write up flag 1 first. It's pretty straight forward.
+# Photogallery
 
+This ctf took me quit a while to figure out. I personally found flag 1 first then flag 0 and I am still working on flag 2. I believe that most people will get flag 1 before flag 0. So i will write up flag 1 first. It's pretty straight forward.
 
 ## Flag 1 – SQL Injection
 
@@ -22,7 +23,8 @@ After obtaining the database name the following query can be used to find out th
 .../fetch?id=1 AND (SELECT Count(*) FROM information_schema.tables WHERE table_schema=database())=2
 ```
 
-After that i went after the table names. There is a great turorial on this here :
+After that i went after the table names. There is a great tutorial on doing this [here](https://delayma.wordpress.com/2019/01/09/magical-image-gallery-1-3-hacker-101-ctf/).
+
 
 The db layout looks like this :
 DB Layout:
