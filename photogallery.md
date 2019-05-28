@@ -1,10 +1,10 @@
 # Photogallery
 
-This ctf took me quit a while to figure out. I personally found flag 1 first then flag 0 and I am still working on flag 2. I believe that most people will get flag 1 before flag 0. So i will write up flag 1 first. It's pretty straight forward.
+This ctf took me quit a while to figure out. I personally found flag 1 first then flag 0 and after another day or two flag 2. I believe that most people will get flag 1 before flag 0. So i will write up flag 1 first. It's pretty straight forward.
 
 ## Flag 1 – SQL Injection
 
-Navigating the website you will notice that there is not a lot to do. We can't buy anything click on anything or comment. Checking out the source code of the website we see that the images are being loaded from the url `/fetch?id=X` (X is a placeholder for a number). Browsing to that url you will see a site with the raw image data. The interesting part however is the url itself. Looking at the url parameter and replacing the value with sth like 2-1 for example shows that the application is vulnerable to sql injection. Great!
+Navigating the website you will notice that there is not a lot to do. We can't buy anything click on anything or comment. Checking out the source code of the website tells you that the images are being loaded from the url `/fetch?id=X` (X is a placeholder for a number). Browsing to that url you will see a site with the raw image data. The interesting part however is the url itself. Looking at the url parameter and replacing the value with sth like 2-1 for example shows that the application is vulnerable to sql injection. Great!
 
 ### Blind injection
 Blind sql injeciton can be used to gain information about the database layout. For example using the following query shows the length of the db_name :
@@ -31,9 +31,9 @@ DB Layout:
 ...num_of_tables : 2
 ...tables_names : albums, photos
 
-For the extraction of the data i used sqlmap. I dumped the entire database using the following commands:
+For the extraction of the data i used sqlmap. I dumped the entire database using the following command:
 ```
-sqlmap -u ".../fetch?id=2" --method GET --dump -D level5 -T photos -p id --code 200 --skip-waf --random-agent --threads 10 -o
+sqlmap -u ".../fetch?id=2" --method GET --dump -D level5 -p id --code 200 --skip-waf --random-agent --threads 10 -o
 ```
 
 You will find flag 1 in the entry for the invisible kitty.
@@ -46,16 +46,26 @@ You will find flag 1 in the entry for the invisible kitty.
 ### Union based injection
 
 
-## WIP
+## Flag 2 – Stacked Queries
+
+This flag is pretty straight forward if you read all of the hints carefully. Using stacked queries its possible to execute alot of sql commands. I tested this using :
+```
+.../fetch?id=1; DROP Table photos
+```
+
+This command drops the photo table and breaks the app entirely. Afterwards you have to request a new instance from the hacker101 ctf page. This however shows that the second command gets executed.
+Nice now where to go from here ? Try more commands !
+Next i tried to insert a new photo with id 4 :
+```
+../fetch?id=1; INSERT INTO photos(id,title,parent, filename) VALUES(4,test,1,test.txt);
+```
+The command did not work and there are actually multiple reasons.
+...1. 
 
 
+From what i can tell commands like UPDATE and INSERT requiere the use of transactions.
 
-To dump it all :
-sqlmap -u "http://35.237.57.141:5001/b09a24aa14/fetch?id=2" --method GET --dump -D level5 -T photos -p id --code 200 --skip-waf --random-agent --threads 10 -o
 
-Flag 2 – Stacked Queries
-Drop a table: (breaks app)
-http://35.196.135.216/5ddb86c66f/fetch?id=1;%20DROP%20Table%20photos
 
 
 
