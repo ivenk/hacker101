@@ -48,7 +48,7 @@ You will find flag 1 in the entry for the invisible kitty.
 
 ## Flag 2 – Stacked Queries
 
-This flag is pretty straight forward if you read all of the hints carefully. Using stacked queries its possible to execute alot of sql commands. I tested this using :
+This flag is pretty straight forward if you read all of the hints carefully and already got acces to the source code from flag 0. Using stacked queries its possible to execute alot of sql commands. I tested this using :
 ```
 .../fetch?id=1; DROP Table photos
 ```
@@ -62,6 +62,13 @@ Next i tried to insert a new photo with id 4 :
 I'm using adorable.jpg because i know the image exists and the server could open it if everything else checks out. The command did not work however and there are actually multiple reasons.
 ...1. The data in the title and filename field are somekind of text meaning of type char or varchar. When inserting the values it is important to use '' around these values: ```... VALUES(4,'test', 1, 'files/adorable.jpg');```
 ...2. From what i can tell commands like UPDATE and INSERT requiere the use of transactions. I noticed that something wasn't working while running the above statement. The hint helped me figure it out:: ```../fetch?id=1; START TRANSACTION; INSERT INTO photos(id,title,parent, filename) VALUES(4,'test',1,'files/adorable.jpg'); COMMIT;
+
+After trying out different queries i took another look at the source code and especially the size calculation of the albums. From the main page i knew that it was broken since it always shows 0. The reason seems to be that it always adds 'files/' before each filename ending in sth like 'files/files/adorable.jpg'. The interesting part however is that the filename from the database gets added to a bash command. After realizing i that i tried to manipulate a filepath in order to execute commands on the remote machine. First however i extracted the command from the file and tested the functionally lokaly aswell as the commands i wanted to inject. For the commands to run properly i needed 2 things:
+...1. A way to see the output of the command on the remote machine
+...2. A way to inject my command into the database.
+
+...
+
 
 
 
