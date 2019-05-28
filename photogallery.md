@@ -67,11 +67,32 @@ I'm using adorable.jpg because i know the image exists and the server could open
 ../fetch?id=1; START TRANSACTION; INSERT INTO photos(id,title,parent, filename) VALUES(4,'test',1,'files/adorable.jpg'); COMMIT;
 ```
 
-After trying out different queries i took another look at the source code and especially the size calculation of the albums. From the main page i knew that it was broken since it always shows 0. The reason seems to be that it always adds 'files/' before each filename ending in sth like 'files/files/adorable.jpg'. The interesting part however is that the filename from the database gets added to a bash command. After realizing i that i tried to manipulate a filepath in order to execute commands on the remote machine. First however i extracted the command from the file and tested the functionally lokaly aswell as the commands i wanted to inject. For the commands to run properly i needed 2 things:
+After trying out different queries i took another look at the source code and especially the size calculation of the albums.
+```
+        rep += '' cur.execute('SELECT id, title, filename FROM photos WHERE parent=%s LIMIT 3', (id,))
+	fns = []	
+        for pid, ptitle, pfn in cur.fetchall():
+            rep += '%s' % (pid, sanitize(ptitle))
+            fns.append(pfn)
+            rep += 'Space used: ' +
+	    subprocess.check_output('du -ch %s || exit 0' % ' '.join('files/' + fn for fn in fns\
+	    ), shell=True, stderr=subprocess.STDOUT).strip().rsplit('\n', 1)[-1] + ''
+```
+From the main page i knew that it was broken since it always shows 0. The reason seems to be that it always adds 'files/' before each filename ending in sth like 'files/files/adorable.jpg'. The interesting part however is that the filename from the database gets added to a bash command. After realizing that i extracted the command from the file and tested the bash command locally on my machine aswell as the commands i wanted to inject. For the commands to run properly on the remote machine i needed 2 things:
   1. A way to see the output of the command on the remote machine  
-  2. A way to inject my command into the database.  
+  2. A way to inject my command into the database.
+
+How to run a command ?
+For that i build a string i want to inject into the db. First i terminate the statement with a ; similar to stacked queries in sql. Then i chose a command, f.e. ```whoami```. Finally i needed a way to see the output. For that i decided to create a new file on the machine using >. The final command loos like this ```; whoami > test.txt```.
+I added it to the database with this :
+```
+.../fetch?id=1;START TRANSACTION; UPDATE photos SET title='3test1', filename='; whoami > test.txt' WHERE id=3; COMMIT;
+```
+Impotant is the usage of transactions and the '' surrounding the values. After using the above command i navigated to the main page in order for it to execute. Now i only needed to take a look at the test.txt file. There are multiple ways to look at the file. I chose to add it to the database and access it through fetch + id.
 
 ...
+
+
 
 
 
