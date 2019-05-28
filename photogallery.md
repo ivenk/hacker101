@@ -25,7 +25,6 @@ After obtaining the database name the following query can be used to find out th
 
 After that i went after the table names. There is a great tutorial on doing this [here](https://delayma.wordpress.com/2019/01/09/magical-image-gallery-1-3-hacker-101-ctf/).
 
-
 The db layout looks like this :
 DB Layout:
 ...db_name: "level5" 
@@ -34,6 +33,7 @@ DB Layout:
 
 For the extraction of the data i used sqlmap. I dumped the entire database using the following commands:
 ```
+sqlmap -u ".../fetch?id=2" --method GET --dump -D level5 -T photos -p id --code 200 --skip-waf --random-agent --threads 10 -o
 ```
 
 You will find flag 1 in the entry for the invisible kitty.
